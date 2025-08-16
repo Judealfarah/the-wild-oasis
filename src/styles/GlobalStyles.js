@@ -45,7 +45,7 @@ const GlobalStyles = createGlobalStyle`
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 0 20px rgba(0, 0, 0, 0.48);
 
   --border-radius-tiny: 3px;
   --border-radius-sm: 5px;

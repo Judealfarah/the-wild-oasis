@@ -6,7 +6,8 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 
-import { useUser } from "./useUser";
+import { useUser } from "./hooks/useUser";
+import { useUpdateUser } from "./hooks/useUpdateUser";
 
 function UpdateUserDataForm() {
   // We don't need the loading state, and can immediately use the user data, because we know that it has already been loaded at this point
@@ -17,23 +18,52 @@ function UpdateUserDataForm() {
     },
   } = useUser();
 
+  const { updateUser, isUpdating } = useUpdateUser();
+
   const [fullName, setFullName] = useState(currentFullName);
   const [avatar, setAvatar] = useState(null);
+  const [newEmail, setNewEmail] = useState(email);
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!fullName) return;
+    updateUser(
+      { fullName, avatar, email: newEmail },
+      {
+        onSuccess: () => {
+          setAvatar(null);
+          e.target.reset();
+        },
+      }
+    );
+  }
+
+  function handleFullNameChange(e) {
+    const value = e.target.value;
+    setFullName(value);
+
+    if (value.trim()) {
+      const generatedEmail =
+        value.trim().replace(/\s+/g, ".").toLowerCase() + "@thewildoasis.com";
+      setNewEmail(generatedEmail);
+    }
+  }
+
+  function handleCancel() {
+    setFullName(currentFullName);
+    setNewEmail(email);
   }
 
   return (
     <Form onSubmit={handleSubmit}>
       <FormRow label="Email address">
-        <Input value={email} disabled />
+        <Input value={newEmail} disabled />
       </FormRow>
       <FormRow label="Full name">
         <Input
           type="text"
           value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          onChange={handleFullNameChange}
           id="fullName"
         />
       </FormRow>
@@ -45,10 +75,10 @@ function UpdateUserDataForm() {
         />
       </FormRow>
       <FormRow>
-        <Button type="reset" variation="secondary">
+        <Button type="reset" variation="secondary" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button>Update account</Button>
+        <Button disabled={isUpdating}>Update account</Button>
       </FormRow>
     </Form>
   );
